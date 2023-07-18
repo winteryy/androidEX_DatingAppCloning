@@ -1,11 +1,16 @@
 package com.example.dating
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import com.example.dating.auth.IntroActivity
 
 import com.example.dating.databinding.ActivityMainBinding
 import com.example.dating.slider.CardStackAdapter
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import com.yuyakaido.android.cardstackview.CardStackLayoutManager
 import com.yuyakaido.android.cardstackview.CardStackListener
 import com.yuyakaido.android.cardstackview.Direction
@@ -51,6 +56,14 @@ class MainActivity : AppCompatActivity() {
         binding.cardStackView.layoutManager = manager
         cardStackAdapter = CardStackAdapter(baseContext, testList)
         binding.cardStackView.adapter = cardStackAdapter
+
+        binding.settingIcon.setOnClickListener {
+            val auth = Firebase.auth
+            auth.signOut()
+
+            val intent = Intent(this, IntroActivity::class.java)
+            startActivity(intent)
+        }
 
         setContentView(binding.root)
 
