@@ -1,13 +1,18 @@
 package com.example.dating
 
 import android.content.Intent
+import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import com.example.dating.auth.IntroActivity
 import com.example.dating.utils.FBAuthUtils
 import com.google.firebase.auth.FirebaseAuth
 import java.time.Duration
+import java.util.jar.Manifest
 
 class SplashActivity : AppCompatActivity() {
 
@@ -33,7 +38,6 @@ class SplashActivity : AppCompatActivity() {
                 finish()
             }, 3000)
         }
-
 
     }
 }
