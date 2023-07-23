@@ -16,6 +16,18 @@
         android:theme="@style/Theme.Dating"
         tools:targetApi="31">
         <activity
+            android:name=".message.MyMsgActivity"
+            android:exported="false" />
+
+        <service
+            android:name=".message.fcm.FirebaseService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
+        <activity
             android:name=".message.MyLikeListActivity"
             android:exported="false" />
         <activity
@@ -47,7 +59,6 @@
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.Dating" />
-
     </application>
 
 </manifest>

@@ -8,6 +8,7 @@ import com.example.dating.R
 import com.example.dating.auth.IntroActivity
 import com.example.dating.databinding.ActivitySettingBinding
 import com.example.dating.message.MyLikeListActivity
+import com.example.dating.message.MyMsgActivity
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 
@@ -36,6 +37,11 @@ class SettingActivity : AppCompatActivity() {
 
         binding.myMatchingListBtn.setOnClickListener{
             val intent = Intent(this, MyLikeListActivity::class.java)
+            startActivity(intent)
+        }
+
+        binding.myMsg.setOnClickListener {
+            val intent = Intent(this, MyMsgActivity::class.java)
             startActivity(intent)
         }
 

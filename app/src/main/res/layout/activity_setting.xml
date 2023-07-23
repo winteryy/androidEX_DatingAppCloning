@@ -15,19 +15,25 @@
             android:id="@+id/myPageBtn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="MYPAGE" />
+            android:text="마이페이지" />
 
         <Button
             android:id="@+id/myMatchingListBtn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="MY MATCHING LIST" />
+            android:text="내 매칭 리스트" />
+
+        <Button
+            android:id="@+id/myMsg"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="내가 받은 메세지" />
 
         <Button
             android:id="@+id/logoutBtn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="LOGOUT" />
+            android:text="로그아웃" />
 
     </LinearLayout>
 

@@ -3,15 +3,27 @@ package com.example.dating.message
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
+import android.widget.Button
+import android.widget.EditText
 import android.widget.ListView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import com.example.dating.R
 import com.example.dating.auth.UserDataModel
+import com.example.dating.message.fcm.NotiModel
+import com.example.dating.message.fcm.PushNotification
+import com.example.dating.message.fcm.RetrofitInstance
 import com.example.dating.utils.FBAuthUtils
 import com.example.dating.utils.FBRef
+import com.example.dating.utils.MyInfo
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import okhttp3.Dispatcher
 
 class MyLikeListActivity : AppCompatActivity() {
 
@@ -21,6 +33,8 @@ class MyLikeListActivity : AppCompatActivity() {
     private val likeUserList = mutableListOf<UserDataModel>()
 
     lateinit var listViewAdapter: ListViewAdapter
+    lateinit var getterUid: String
+    lateinit var getterToken: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,8 +44,19 @@ class MyLikeListActivity : AppCompatActivity() {
         listViewAdapter = ListViewAdapter(this, likeUserList)
         userListView.adapter = listViewAdapter
 
-        userListView.setOnItemClickListener { parent, view, position, id ->
-            checkMatching(likeUserList[position].uid.toString())
+//        userListView.setOnItemClickListener { parent, view, position, id ->
+//            checkMatching(likeUserList[position].uid.toString())
+//
+//        }
+
+        userListView.setOnItemLongClickListener { parent, view, position, id ->
+//            Toast.makeText(this, "test", Toast.LENGTH_SHORT).show()
+            getterUid = likeUserList[position].uid.toString()
+            getterToken = likeUserList[position].token.toString()
+            checkMatching(getterUid)
+
+
+            return@setOnItemLongClickListener(true)
         }
 
         getMyLikeList()
@@ -46,13 +71,15 @@ class MyLikeListActivity : AppCompatActivity() {
                     val likeUserKey = dataModel.key.toString()
 
                     if(likeUserKey.equals(myUid)){
-                        Toast.makeText(this@MyLikeListActivity, "매칭이 되었습니다.", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@MyLikeListActivity, "매칭이 된 유저입니다.", Toast.LENGTH_SHORT).show()
                         check = true
+                        showDialog()
+
                         break
                     }
                 }
                 if(!check){
-                    Toast.makeText(this@MyLikeListActivity, "매칭이 되지 않았습니다.", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@MyLikeListActivity, "매칭이 되지 않은 유저입니다.", Toast.LENGTH_SHORT).show()
                 }
             }
             override fun onCancelled(databaseError: DatabaseError) {
@@ -62,6 +89,10 @@ class MyLikeListActivity : AppCompatActivity() {
 
         }
         FBRef.userLikeRef.child(otherUid).addValueEventListener(postListener)
+    }
+
+    private fun testPush(notification : PushNotification) = CoroutineScope(Dispatchers.IO).launch {
+        RetrofitInstance.api.postNotification(notification)
     }
 
     private fun getUserDataList(){
@@ -104,5 +135,32 @@ class MyLikeListActivity : AppCompatActivity() {
             }
         }
         FBRef.userLikeRef.child(myUid).addValueEventListener(postListener)
+    }
+
+    private fun showDialog(){
+        val mDialogView = LayoutInflater.from(this).inflate(R.layout.custom_dialog, null)
+        val mBuilder = AlertDialog.Builder(this)
+            .setView(mDialogView)
+            .setTitle("메세지 보내기")
+
+        val mAlertDialog = mBuilder.show()
+
+        val sendBtn = mAlertDialog.findViewById<Button>(R.id.sendBtn)
+        val textArea = mAlertDialog.findViewById<EditText>(R.id.sendTextArea)
+
+        sendBtn?.setOnClickListener {
+
+            val msgText = textArea!!.text.toString()
+            val msgModel = MsgModel(MyInfo.myNickname, msgText)
+
+            FBRef.userMsgRef.child(getterUid).push().setValue(msgModel)
+
+            val notiModel = NotiModel(MyInfo.myNickname, msgText)
+            val pushModel = PushNotification(notiModel, getterToken)
+
+            testPush(pushModel)
+
+            mAlertDialog.dismiss()
+        }
     }
 }

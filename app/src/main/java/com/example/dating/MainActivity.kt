@@ -22,6 +22,7 @@ import com.example.dating.setting.SettingActivity
 import com.example.dating.slider.CardStackAdapter
 import com.example.dating.utils.FBAuthUtils
 import com.example.dating.utils.FBRef
+import com.example.dating.utils.MyInfo
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DataSnapshot
@@ -168,6 +169,8 @@ class MainActivity : AppCompatActivity() {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 val data = dataSnapshot.getValue(UserDataModel::class.java)
                 currentUserGender = data?.gender.toString()
+                MyInfo.myNickname = data?.nickname.toString()
+
                 getUserDataList(currentUserGender)
 
             }
